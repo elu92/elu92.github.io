@@ -1,0 +1,31 @@
+---
+title: 'Getting R and Python To "Talk" '
+author: Emma Uwakwe
+date: '2020-12-05'
+slug: getting-r-and-python-to-talk
+categories: []
+tags: []
+description: ''
+---
+![](/post/2020-12-05-getting-r-and-python-to-talk_files/code.png){width=50% height=50%}
+
+##Most of the people in data science community are committed to only one programming language but wished to have some of the capabilities of other. For instance, Python is more widely used in data processing with objected-oriented capabilities along with incredible community support but unlike R, it doesn’t have specialised packages for statistical computing. Similarly, R consists of packages for almost any statistical application one can think of and equipped with excellent visualisation libraries like ggplot2 but can be a memory glutton and slow when dealing with large datasets. With reticulate, we can now combine both R and Python and utilise the strengths of both worlds.
+
+```{r setup, include=FALSE}
+library(reticulate)
+use_virtualenv("r-reticulate")
+reticulate::py_discover_config()
+devtools::install_github("rstudio/reticulate")
+
+```
+
+```{R}
+bestmovie<-"Interstellar"
+reticulate::repl_python()
+```
+
+```{python}
+worstmovie= "Twilight"
+print(r.bestmovie,worstmovie)
+```
+

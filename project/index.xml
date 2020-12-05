@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on Emma Uwakwe</title>
+    <link>/project/</link>
+    <description>Recent content in Projects on Emma Uwakwe</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language><atom:link href="/project/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>project 2 - elu92</title>
+      <link>/project/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>Intro This study is a look at weight loss three different types of diets. The efficiancy of each diet was measured in response to the total weight loss of each person, which is their starting weight minus their weight at 6 weeks post starting the diet. We see one binary value corresponding to either male or female, 0 and 1 respectively. Their height is measured in centimeters. There are 3 diet types, 1,2,and 3.</description>
+    </item>
+    
+    <item>
+      <title>Project1</title>
+      <link>/project/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>Intro I chose two data sets that reflect conditions in the year 2016,across all states. I basiccly wanted to look at how violence effected the voting patterns of each state, so I chose to use a data set that recorderd total murders in 2016 for each state,and a data set that showcased the percentage of electoral votes that went to biden versus trump for each state. These data sets also have abbreviations and population size for each state.</description>
+    </item>
+    
+  </channel>
+</rss>

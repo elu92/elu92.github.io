@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Emma Uwakwe" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>project 2 - elu92</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project2/">project 2 - elu92</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         January 1, 0001 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+<link href="../../rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="../../rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+
+<div id="intro" class="section level1">
+<h1>Intro</h1>
+<p><em>This study is a look at weight loss three different types of diets. The efficiancy of each diet was measured in response to the total weight loss of each person, which is their starting weight minus their weight at 6 weeks post starting the diet. We see one binary value corresponding to either male or female, 0 and 1 respectively. Their height is measured in centimeters. There are 3 diet types, 1,2,and 3. They also recorded age for each person. In total there are 76 observations and 7 variables.</em></p>
+<div id="significance-tests" class="section level2">
+<h2>Significance Tests</h2>
+<pre class="r"><code>library(readr)
+diet &lt;- read_csv(&quot;stcp-Rdataset-Diet.csv&quot;)
+
+diet$weight.loss&lt;-diet$pre.weight - diet$weight6weeks
+
+man1&lt;-manova(cbind(weight.loss,Age,pre.weight,Height)~Diet, data=diet)
+summary(man1)</code></pre>
+<pre><code>## Df Pillai approx F num Df den Df Pr(&gt;F)
+## Diet 1 0.11027 2.2618 4 73 0.07064 .
+## Residuals 76
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<pre class="r"><code>summary.aov(man1)</code></pre>
+<pre><code>## Response weight.loss :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Diet 1 45.78 45.781 7.6387 0.007164 **
+## Residuals 76 455.49 5.993
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Response Age :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Diet 1 121.0 120.984 1.26 0.2652
+## Residuals 76 7297.2 96.015
+##
+## Response pre.weight :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Diet 1 9.0 9.019 0.1172 0.7331
+## Residuals 76 5850.4 76.979
+##
+## Response Height :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Diet 1 136.9 136.90 1.0776 0.3025
+## Residuals 76 9654.6 127.03</code></pre>
+<pre class="r"><code>diet%&gt;%group_by(Diet)%&gt;%summarize(mean(weight.loss))</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##    Diet `mean(weight.loss)`
+##   &lt;dbl&gt;               &lt;dbl&gt;
+## 1     1                3.3 
+## 2     2                3.03
+## 3     3                5.15</code></pre>
+<pre class="r"><code>pairwise.t.test(diet$weight.loss,diet$Diet, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  diet$weight.loss and diet$Diet 
+## 
+##   1      2     
+## 2 0.6845 -     
+## 3 0.0075 0.0017
+## 
+## P value adjustment method: none</code></pre>
+<p><em>In total we performed 8 tests, 1 manova,4 anova, and 3 post hoc t tests . With this in mind we must our probability of at least one Type I error is 1-.95^(8), which is .34 or 34 percent. So we will set out alpha to .05/8, which is .0063. We perfomed a multivariate manova see if there was a relationship between diet type (1,2,3) and 5 dependent numerical variables (weight.loss,Age,gender,pre.weight,Height). The F statistic was not significant, however, I proceeded to do a follow-up univariate anovas, which showed that the relationship between diet and weight loss were significant ,with a statistic of .006.Post hoc analysis was performed conducting pairwise comparisons to determine which diets differed in weight.loss amounts. This showed that 3 and 1 differed, and 3 and 2 differed after adjusting for multiple comparisons (bonferroni). The Manova assumptions are as follows : Random samples with independent observations, dependant variables have at least 25 observations, homogeneity of within-group covariance matrices, linear relationships among DVs, no extreme univariate or multivariate outliers, no multicollinearity. All asumptions are likely to have been met, exept for no multicollinearity, because bodily numbers do not vary drastically. </em></p>
+</div>
+<div id="randomization-test" class="section level2">
+<h2>Randomization Test</h2>
+<pre class="r"><code>#Our null hypotheis that there was no association between amount of weight loss and Diet 3 or 2, and our alternate was that there is an association between amount of weight loss and Diet 3 or 2. I chose to do just these two diets due to their post hoc signifciance, and due to the fact that diet 1 is under our amount of 25 observations.
+diet%&gt;%group_by(Diet)%&gt;%summarize(mean=mean(weight.loss))</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##    Diet  mean
+##   &lt;dbl&gt; &lt;dbl&gt;
+## 1     1  3.3 
+## 2     2  3.03
+## 3     3  5.15</code></pre>
+<pre class="r"><code>diet%&gt;%group_by(Diet)%&gt;%summarize(s=sd(weight.loss))</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##    Diet     s
+##   &lt;dbl&gt; &lt;dbl&gt;
+## 1     1  2.24
+## 2     2  2.52
+## 3     3  2.40</code></pre>
+<pre class="r"><code>diet%&gt;%group_by(Diet)%&gt;%summarize(n())</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##    Diet `n()`
+##   &lt;dbl&gt; &lt;int&gt;
+## 1     1    24
+## 2     2    27
+## 3     3    27</code></pre>
+<pre class="r"><code>df_two &lt;- data.frame(loss = rnorm(25, mean=3.268000 , sd=2.464535),Diet = &quot;2&quot;)
+df_three &lt;- data.frame(loss = rnorm(27, mean=5.148148, sd=2.395568  ),Diet=&quot;3&quot;)
+
+df_weight_loss &lt;- rbind(df_two, df_three)
+
+ggplot(df_weight_loss, aes(x = loss, fill = Diet)) + ylab(&quot;Count&quot;) + xlab(&quot;Weight Loss&quot;) + geom_histogram(bins = 30, colour = &quot;black&quot;) + 
+  geom_vline(data = filter(df_weight_loss, Diet == &quot;2&quot;), aes(xintercept = mean(loss)),size = 1, linetype = &quot;dashed&quot;, colour = &quot;green&quot;) + geom_vline(data = filter(df_weight_loss, Diet == &quot;3&quot;), aes(xintercept = mean(loss)),size = 1, linetype = &quot;dashed&quot;, colour = &quot;blue&quot;)+theme_classic()</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-2-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>mean_two &lt;- mean(df_two$loss)
+mean_three &lt;- mean(df_three$loss)
+diff_means_obs &lt;- mean_three - mean_two
+
+t.test(loss ~ Diet, data = df_weight_loss, alternative = &quot;two.sided&quot;)</code></pre>
+<pre><code>##
+## Welch Two Sample t-test
+##
+## data: loss by Diet
+## t = -3.8982, df = 48.558, p-value = 0.000297
+## alternative hypothesis: true difference in means is not
+equal to 0
+## 95 percent confidence interval:
+## -4.573266 -1.461555
+## sample estimates:
+## mean in group 2 mean in group 3
+## 2.557799 5.575210</code></pre>
+<pre class="r"><code>set.seed(49)
+simulated_means &lt;- list()
+nreps = 5000
+for(i in 1:nreps){
+        reshuffled &lt;- df_weight_loss
+reshuffled$loss &lt;- sample(reshuffled$loss, 
+                           size = nrow(reshuffled), replace = FALSE)
+mean_diet_2_sim&lt;- mean(reshuffled %&gt;% filter(Diet == &quot;2&quot;) %&gt;% pull(loss))
+mean_diet_3_sim&lt;- mean(reshuffled %&gt;% filter(Diet == &quot;3&quot;) %&gt;% pull(loss))
+
+mean_diff_sim &lt;- mean_diet_3_sim - mean_diet_2_sim
+    
+simulated_means[i] &lt;- mean_diff_sim
+}    
+simulated_means &lt;- unlist(simulated_means)
+
+simulated_means[1:10]</code></pre>
+<pre><code>## [1] 0.95573647 -0.49833031 0.07062388 0.27616359
+-0.90648121 0.25392773 -0.52665208 -0.51084717
+## [9] -1.38985738 -0.81178937</code></pre>
+<pre class="r"><code>ggplot() + ylab(&quot;Count&quot;) + xlab(&quot;Simulated mean weight loss difference&quot;) +
+    geom_histogram(aes(x = simulated_means), bins = 30, 
+                   fill = &quot;grey&quot;, alpha = 0.4, colour = &quot;black&quot;) +
+    geom_vline(xintercept = diff_means_obs, size = 1, 
+               linetype = &quot;dashed&quot;, colour = &quot;black&quot;) + 
+    theme_classic()</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>abs_simulated_means &lt;- abs(simulated_means)
+abs_diff_means_obs &lt;- abs(diff_means_obs)
+exceed_count &lt;- length(abs_simulated_means[abs_simulated_means &gt;= 
+                                               abs_diff_means_obs])
+p_val &lt;- exceed_count / nreps
+view(p_val)</code></pre>
+<p><em>The P-value from the randomization test is 0.07326255555.As we can see, the randomization test provides results that are largely inconsistent with the t-test. This is not surprising since we specifically sampled independent data from non-normal distributions with semi-similar variances. In other words, our sampled data violate at least one of the assumptions of the t-test and in such a case the difference in means is by definition non-analogous to the t statistic used in the t-test. This is an example where randomization tests provide more accurate (or exact) P-values than parametric tests (e.g. small samples from skewed distributions) but even more diverse applications of randomization tests are found in ecology and evolutionary biology, unlike this model.</em></p>
+</div>
+<div id="linear-regression" class="section level2">
+<h2>Linear Regression</h2>
+<pre class="r"><code>center_scale &lt;- function(x) {scale(x, scale = FALSE)}
+diet$age_scaled&lt;-center_scale(diet$Age)
+diet$weightloss_scaled&lt;-center_scale(diet$weight.loss)
+diet$height_scaled&lt;-center_scale(diet$Height)
+
+fit&lt;-lm(weightloss_scaled ~ age_scaled * height_scaled, data=diet)
+summary(fit)</code></pre>
+<pre><code>##
+## Call:
+## lm(formula = weightloss_scaled ~ age_scaled *
+height_scaled,
+## data = diet)
+##
+## Residuals:
+## Min 1Q Median 3Q Max
+## -5.783 -1.701 -0.085 1.582 5.286
+##
+## Coefficients:
+## Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) 0.031269 0.290551 0.108 0.915
+## age_scaled -0.020978 0.030521 -0.687 0.494
+## height_scaled -0.011604 0.028219 -0.411 0.682
+## age_scaled:height_scaled -0.003560 0.002902 -1.227 0.224
+##
+## Residual standard error: 2.556 on 74 degrees of freedom
+## Multiple R-squared: 0.03541, Adjusted R-squared:
+-0.003693
+## F-statistic: 0.9056 on 3 and 74 DF, p-value: 0.4426</code></pre>
+<pre class="r"><code>#The intercept estimate means that when someone has a height and age of 0, they will lose 0.036440 pounds, which is expected since you cant lose much if you dont exist (not sig). The coef estimate for age means that as weight loss increases by one pound, the age decreases by 0.024870 (not sig). The same goes for height, except height decreases by 0.008848 as weight loss increases(not).Slope of age on weight loss for age factor of .003913 less than height(not significant).
+
+library(interactions)
+#interact_plot(fit,weightloss_scaled,height_scaled)
+
+
+ggplot(diet, aes(weightloss_scaled,age_scaled, color = gender)) +geom_smooth(method = &quot;lm&quot;, se = F, fullrange = T)+ geom_point()+geom_vline(xintercept=0,lty=2)+geom_vline(xintercept=mean(diet$weightloss_scaled))</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(fit,1)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-4-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(fit, 3)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-4-3.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(fit, 2)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-4-4.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(lmtest)
+library(car)
+library(sandwich)
+coeftest(fit, vcov = vcovHC(fit))[,1:2]</code></pre>
+<pre><code>##                             Estimate  Std. Error
+## (Intercept)               0.03126928 0.298750582
+## age_scaled               -0.02097818 0.029870458
+## height_scaled            -0.01160375 0.028090352
+## age_scaled:height_scaled -0.00355979 0.003000632</code></pre>
+<pre class="r"><code>#When we fixed robust to violations of homoskedasticity, there were no significant changes in our estimates or our standar error. Since I corrected for normaility earlier, and have just corrected for homoskedasticity, our model must have an issue of linearity, and should use non-linear transformations of the predictors.</code></pre>
+<p><em>Our adjusted R-squared is -0.01024, which means our overall model explains 0% of variation in the response variable explained by the overall model.</em></p>
+</div>
+<div id="bootstrapping" class="section level2">
+<h2>Bootstrapping</h2>
+<pre class="r"><code>fit&lt;-lm(weightloss_scaled ~ age_scaled*height_scaled, data=diet)
+resids&lt;-fit$residuals
+fitted&lt;-fit$fitted.values
+
+resid_resamp&lt;-replicate(5000,{
+new_resids&lt;-sample(resids,replace=TRUE) 
+diet$new_y&lt;-fitted+new_resids 
+fit&lt;-lm(new_y~age_scaled *height_scaled,data=diet) 
+coef(fit) 
+})
+
+resid_resamp%&gt;%t%&gt;%as.data.frame%&gt;%summarize_all(sd)</code></pre>
+<pre><code>## (Intercept) age_scaled height_scaled
+age_scaled:height_scaled
+## 1 0.2836641 0.02969396 0.02787081 0.002804571</code></pre>
+<pre class="r"><code>#Our intercept standard error has the following numbers - orginal:.288, robust:0.296191891, bootstrapped:0.288387. In all cases none of them are significant, and there is only a .01 flucuation. Our age standard error has the following numbers - orginal:0.030017, robust: 0.029290982, bootstrapped:0.02896615 .In all cases none of them are significant, and there is only a .01 flucuation. Our height standard error has the following numbers - orginal:0.027614, robust:0.027816173, bootstrapped:0.02740836.In all cases none of them are significant, and there is only a .01 flucuation. </code></pre>
+</div>
+<div id="logistic-modeling" class="section level2">
+<h2>Logistic Modeling</h2>
+<pre class="r"><code>library(tidyverse)
+library(lmtest)
+fit3&lt;-glm(gender~Height + pre.weight,data=diet,family=binomial)
+summary(fit3)</code></pre>
+<pre><code>##
+## Call:
+## glm(formula = gender ~ Height + pre.weight, family =
+binomial,
+## data = diet)
+##
+## Deviance Residuals:
+## Min 1Q Median 3Q Max
+## -2.51852 -0.31321 -0.07863 0.34234 2.25270
+##
+## Coefficients:
+## Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept) -44.69997 10.78914 -4.143 3.43e-05 ***
+## Height 0.08002 0.03660 2.187 0.0288 *
+## pre.weight 0.42030 0.09960 4.220 2.44e-05 ***
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## (Dispersion parameter for binomial family taken to be 1)
+##
+## Null deviance: 104.039 on 75 degrees of freedom
+## Residual deviance: 40.182 on 73 degrees of freedom
+## (2 observations deleted due to missingness)
+## AIC: 46.182
+##
+## Number of Fisher Scoring iterations: 6</code></pre>
+<pre class="r"><code>exp(coef(fit3))</code></pre>
+<pre><code>##  (Intercept)       Height   pre.weight 
+## 3.864094e-20 1.083314e+00 1.522415e+00</code></pre>
+<pre class="r"><code>#Controlling for pre.weight, the larger a persons weight was to start of with, the moree likely they were a male. Controlling for starting weight, the taller a person was, the more likely they were a male. Both are significant.Controlling for starting weight, for every one additional inch , odds of being a male increase by a factor of 1.083314 (significant). Controlling for height, for every one additional pound , odds of being a male increase by a factor of 1.522415 (significant).Odds of being a male when weight and height are zero is 3.864094e-20.
+
+class_diag&lt;-function(probs,truth){
+  
+  if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+  prediction&lt;-ifelse(probs&gt;.5,1,0)
+  acc=mean(truth==prediction)
+  sens=mean(prediction[truth==1]==1)
+  spec=mean(prediction[truth==0]==0)
+  ppv=mean(truth[prediction==1]==1)
+  f1=2*(sens*ppv)/(sens+ppv)
+  
+  #CALCULATE EXACT AUC
+  ord&lt;-order(probs, decreasing=TRUE)
+  probs &lt;- probs[ord]; truth &lt;- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+  TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+  
+  n &lt;- length(TPR)
+  auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,auc)
+}
+
+
+gen&lt;-as.numeric(fit3$y)%&gt;%na.omit()
+PROBS&lt;-predict(fit3,type = &quot;response&quot;)%&gt;%na.omit
+table(predict=as.numeric(PROBS&gt;.5),truth=gen)%&gt;%addmargins</code></pre>
+<pre><code>##        truth
+## predict  0  1 Sum
+##     0   40  3  43
+##     1    3 30  33
+##     Sum 43 33  76</code></pre>
+<pre class="r"><code>#Accuracy: (40+30)/76 = .921,  92.1% of cases are classified correctly 
+#Sensitivity: 30/33 = .090, 9% of men are correctly classified
+#Specificity: 40/43 = .930, 93% of women are correctly classified
+#Precsion: 40/43 = .930, woman who are classified as woman who actually are
+#AUC : 0.9556025, easy to predict gender from height and pre weight 
+
+library(plotROC)
+ROCplot&lt;-ggplot(fit3)+geom_roc(aes(d=fit3$y,m=PROBS), n.cuts=0)
+ROCplot</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-6-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.9556025</code></pre>
+<pre class="r"><code>#our very high AUC means that it is easy to predict gender from height and pre weight
+
+
+
+#diet%&gt;%ggplot(aes(diet$logit,color=gender,fill=gender))+geom_density(alpha=.4)+theme(legend.position=c(.85,.85))+geom_vline(xintercept=0)+xlab(&quot;predictor (logit)&quot;)</code></pre>
+</div>
+</div>
+<div id="logistical-modeling-part-2" class="section level1">
+<h1>Logistical Modeling Part 2</h1>
+<pre class="r"><code>fit4&lt;-glm(gender ~., data = diet, family = &quot;binomial&quot;)
+summary(fit4)</code></pre>
+<pre><code>##
+## Call:
+## glm(formula = gender ~ ., family = &quot;binomial&quot;, data =
+diet)
+##
+## Deviance Residuals:
+## Min 1Q Median 3Q Max
+## -3.514e-05 -2.100e-08 -2.100e-08 2.100e-08 2.882e-05
+##
+## Coefficients: (4 not defined because of singularities)
+## Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept) 4.913e+02 6.121e+05 0.001 0.999
+## Person 1.641e+01 1.157e+04 0.001 0.999
+## Age 6.888e-01 5.998e+03 0.000 1.000
+## Height 1.562e-01 1.388e+03 0.000 1.000
+## pre.weight -7.623e+00 1.304e+04 -0.001 1.000
+## Diet -4.220e+02 3.011e+05 -0.001 0.999
+## weight6weeks 2.762e+00 1.093e+04 0.000 1.000
+## weight.loss NA NA NA NA
+## age_scaled NA NA NA NA
+## weightloss_scaled NA NA NA NA
+## height_scaled NA NA NA NA
+##
+## (Dispersion parameter for binomial family taken to be 1)
+##
+## Null deviance: 1.0404e+02 on 75 degrees of freedom
+## Residual deviance: 3.7770e-09 on 69 degrees of freedom
+## (2 observations deleted due to missingness)
+## AIC: 14
+##
+## Number of Fisher Scoring iterations: 25</code></pre>
+<pre class="r"><code>exp(coef(fit4))</code></pre>
+<pre><code>## (Intercept) Person Age Height pre.weight
+## 2.231405e+213 1.340347e+07 1.991313e+00 1.169093e+00
+4.889389e-04
+## Diet weight6weeks weight.loss age_scaled
+weightloss_scaled
+## 5.137349e-184 1.582470e+01 NA NA NA
+## height_scaled
+## NA</code></pre>
+<pre class="r"><code>gen2&lt;-as.numeric(fit4$y)%&gt;%na.omit()
+PROBS2&lt;-predict(fit4,type = &quot;response&quot;)%&gt;%na.omit
+class_diag(PROBS2,gen2)</code></pre>
+<pre><code>##   acc sens spec ppv auc
+## 1   1    1    1   1   1</code></pre>
+<pre class="r"><code>library(glmnet)
+library(dplyr)
+diet2&lt;-diet
+
+#folding part 1
+set.seed(1234)
+k=10
+data &lt;- diet2 %&gt;% sample_frac #put rows of dataset in random order
+folds &lt;- ntile(1:nrow(data),n=10) #create fold labels
+diags&lt;-NULL
+for(i in 1:k){
+train &lt;- data[folds!=i,] #create training set (all but fold i)
+test &lt;- data[folds==i,] #create test set (just fold i)
+truth &lt;- diet2$gender #save truth labels from fold i
+fit5 &lt;- glm(gender~(.)^2, data=train, family=&quot;binomial&quot;)
+probs &lt;- predict(fit5, newdata=test, type=&quot;response&quot;)
+diags&lt;-rbind(diags,class_diag(probs,truth))
+}
+class_diag(probs,truth)</code></pre>
+<pre><code>##   acc sens spec ppv auc
+## 1  NA   NA   NA  NA  NA</code></pre>
+<pre class="r"><code>#lasso
+diet2&lt;-diet
+gen3&lt;-as.numeric(fit4$y)%&gt;%na.omit()
+yes &lt;- as.matrix(gen3) 
+xes&lt;-model.matrix(gender~. ,data=diet2)[,-1]
+xes&lt;-scale(xes)
+cv &lt;- cv.glmnet(xes, yes, family = &quot;binomial&quot;) 
+lasso &lt;- glmnet(xes, yes, family = &quot;binomial&quot;, lambda = cv$lamda.1se)
+#coef(lasso) #Values that show up are the most predictive variables
+
+#Folding part 2
+fit6&lt;-glm(gender ~ Height + pre.weight, data = diet2, family = &quot;binomial&quot;)
+set.seed(1234)
+k=10
+data &lt;- diet2 %&gt;% sample_frac #put rows of dataset in random order
+folds &lt;- ntile(1:nrow(data),n=10) #create fold labels
+diags&lt;-NULL
+for(i in 1:k){
+train2 &lt;- data[folds!=i,] #create training set (all but fold i)
+test2 &lt;- data[folds==i,] #create test set (just fold i)
+truth2 &lt;- diet2$gender #save truth labels from fold i
+fit7 &lt;- glm(gender~Height + pre.weight, data=train, family=&quot;binomial&quot;)
+probs2 &lt;- predict(fit7, newdata=test2, type=&quot;response&quot;)
+diags2&lt;-rbind(diags,class_diag(probs2,truth2))
+}
+class_diag(probs2,truth2)</code></pre>
+<pre><code>##   acc sens spec ppv auc
+## 1  NA   NA   NA  NA  NA</code></pre>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

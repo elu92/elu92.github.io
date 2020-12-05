@@ -1,0 +1,141 @@
+---
+title: "Project1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
+tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
+```
+
+
+## Intro 
+
+I chose two data sets that reflect conditions in the year 2016,across all states. I basiccly wanted to look at how violence effected the voting patterns of each state, so I chose to use a data set that recorderd total murders in 2016 for each state,and a data set that showcased the percentage of electoral votes that went to biden versus trump for each state. These data sets also have abbreviations and population size for each state. 
+
+```{r}
+library(dslabs)
+#data_frame("murders")
+#data_frame("results_us_election_2016")
+head(murders)
+head(results_us_election_2016)
+```
+
+##Joining the Data Sets 
+```{r}
+library(dplyr)
+project <- left_join(murders, results_us_election_2016, by = "state") %>% select(-others) %>% rename(ev = electoral_votes)
+head(project)
+```
+*I chose to drop the "others" column, due to the fact that in reality only two parties mattered in this 2016 election, and a vote for a "other" party, was a vote for Trump. I also chose to rename the electoral votes to a shorter abbreviation becasue the full words made the data "seem" untidy. I chose a left join because I wanted to use a join that was based on mutating the data frame. I could have used an inner join, since there are no NA's, but I chose the left join.*
+
+##Summarizing and DPLYR 
+```{r}
+library(dplyr)
+library(dslabs)
+library(tidyr)
+gbregion<-project%>%group_by(region)%>%summarize_if(is.numeric,c(mean=mean, sd=sd))
+head(gbregion)
+ 
+project%>%group_by(region)%>%summarize_if(is.numeric,c(mean=mean, sd=sd))%>% pivot_longer(-region) %>% separate(name,into =c("var", "stat"))
+ 
+filter(project, region=="south")%>%summarise(mean = mean(project$total))
+ 
+topten <- project%>% arrange(desc(population), .by_group = TRUE)%>%slice(1:10)
+head(topten)
+
+murders <-project%>%mutate(murders, rate = total / population * 100000)
+head(murders)
+
+
+murders %>% select(state, region, rate) %>% filter(rate <= 0.71)
+
+##using summarize
+
+us_murder_rate <- project %>%
+  summarize(rate = sum(total) / sum(population) * 100000)
+us_murder_rate
+
+summarize(project, mean(population))
+
+project%>%filter(region=="south")%>%summarize(average = mean(project$trump,na.rm = T),standard_deviation=sd(project$trump, na.rm = TRUE))
+
+project %>%group_by(region) %>%summarize(median = median(clinton), minimum = min(clinton),maximum = max(clinton))
+
+project %>% group_by(region) %>%summarize(range = quantile(ev, c(0, 0.5, 1)))
+
+project %>% group_by(region) %>%summarize(median_rate =median(population))
+
+project %>% group_by(region) %>% summarize(n())
+
+summarise(project, states = n_distinct(abb), count = n())
+
+project %>%group_by(region) %>%summarize(median_yearly_murder_rate = median(total))
+
+project%>%group_by(state) %>%
+  summarize(avg_votes = mean(ev),n = n()) %>% mutate(state = as.character(state))
+```
+*I found out that the more violence that an area had, then the more likely they were to vote for Clinton. I can attribute this to systematic issues, and the fact that poor/poverty ridden areas are more likely to have more violence, resulting in them more likely to vote for a candidate who is not filthy rich/ concered only with the well being of the filthy rich. I can also attribute this to the fact that minority areas are more likely to have higher crime, and they are also more likely to be democratic, because that is what helps them the most. *
+
+*Another thing I got out of summarizing and using DPLYR was the fact that areas with looser gun laws are more likely to have a higher amount of gun violence. This makes sense, but is very unfornaute, becasue it would be the hope that areas like this (the south and west) would take more consideration into vetting the people buying the guns.*
+
+##Visualizing and Pivoting 
+  
+```{r}
+library(tidyverse)
+library(tidyr)
+library(dplyr)
+library(lubridate)
+
+cormat<-project%>%select_if(is.numeric)%>%cor(use = "pair")
+cormat%>%round(2)
+
+cormat%>%as.data.frame%>%rownames_to_column("var1")%>%pivot_longer(-1,"var2",values_to="correlation")%>%ggplot(aes(var1,var2,fill=correlation))+geom_tile()+
+  scale_fill_gradient2(low = "white", mid = "pink", high = "green")+
+  geom_text(aes(label=round(correlation,2)),color="black", size=4)+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+  coord_fixed()
+
+ p <- project %>% ggplot(aes(population, total, label = abb, color = region)) +
+   geom_label()
+p + scale_x_log10() + 
+  scale_y_log10() + ggtitle("Gun murder data")
+
+r <- murders %>% 
+  summarize(rate = sum(total) /  sum(population) * 10^6) %>%
+  pull(rate)
+project %>% ggplot(aes(population/10^6, total, label = abb)) +   
+  geom_abline(intercept = log10(r), lty = 2, color = "darkgrey") +
+  geom_point(aes(col=region), size = 3) +
+  scale_x_log10() +
+  scale_y_log10() +
+  xlab("Populations in millions (log scale)") + 
+  ylab("Total number of murders (log scale)") +
+  ggtitle("US Gun Murders in 2010") + 
+  scale_color_discrete(name = "Region") +
+   scale_x_continuous(breaks = round(seq(min(0), max(40), by = 5),1)) +
+  scale_y_continuous(breaks = round(seq(min(0), max(1100), by = 150),1))
+```
+
+*These graphs seem to show that the higher the population is, as well as electoral votes, then the higher the amount of murders will be - which makes sense, howeve there are some outliers , like DC - which could be due to the high rate of homelessness. If I have time to do another project like this, I would correlate homelessness with Trump votes to see if there is any correlation there. The south and west, both places where it is normal to have a gun, were consistently high in the murder rate.*
+
+*I also ran a graphing code to see if there was any correlation with the high murder rate and the percentage of votes that went to Trump, and it turns out there was really no correlation, so I chose to just improve on my previous graph for the second graph.*
+
+*I also chose to pivot longer in this step in order to be able to see my correlation matrix with ease, since I have trouble matching up numbers, I prefferd the numbers be seperated and in order doing down the page, instead of in a wide matrix.*
+
+##Clustering 
+```{r}
+library(tidyverse)
+library(cluster)
+#project
+clust_dat<-project%>%select(population,trump,clinton)
+
+set.seed(348)
+kmeans1 <- clust_dat %>% kmeans(3)
+kmeans1
+
+kmeansclust<-clust_dat%>%mutate(cluster=as.factor(kmeans1$cluster))
+
+kmeansclust%>%ggplot(aes(trump,clinton,color=cluster))+geom_point()
+```
+*This clustering shows that the states with the bigger populations, such as California, or New York, were more likley to vote for Clinton, while the smaller states were the least likely to vote for Clinton. I can not think of a reason that this would be, besides the confounding fact that all of the huge states, with the exception of Texas, are fairly liberal states. There was one outlier small state that did vote heavily democratic, DC - probably due to the fact that alot of political families reside there, and they usually know how to vote correctly.*

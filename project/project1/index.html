@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Emma Uwakwe" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project1</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project1/">Project1</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         January 1, 0001 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+<link href="../../rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="../../rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+
+<div id="intro" class="section level2">
+<h2>Intro</h2>
+<p>I chose two data sets that reflect conditions in the year 2016,across all states. I basiccly wanted to look at how violence effected the voting patterns of each state, so I chose to use a data set that recorderd total murders in 2016 for each state,and a data set that showcased the percentage of electoral votes that went to biden versus trump for each state. These data sets also have abbreviations and population size for each state.</p>
+<pre class="r"><code>library(dslabs)
+# data_frame(&#39;murders&#39;)
+# data_frame(&#39;results_us_election_2016&#39;)
+head(murders)</code></pre>
+<pre><code>##        state abb region population total
+## 1    Alabama  AL  South    4779736   135
+## 2     Alaska  AK   West     710231    19
+## 3    Arizona  AZ   West    6392017   232
+## 4   Arkansas  AR  South    2915918    93
+## 5 California  CA   West   37253956  1257
+## 6   Colorado  CO   West    5029196    65</code></pre>
+<pre class="r"><code>head(results_us_election_2016)</code></pre>
+<pre><code>##          state electoral_votes clinton trump others
+## 1   California              55    61.7  31.6    6.7
+## 2        Texas              38    43.2  52.2    4.5
+## 3      Florida              29    47.8  49.0    3.2
+## 4     New York              29    59.0  36.5    4.5
+## 5     Illinois              20    55.8  38.8    5.4
+## 6 Pennsylvania              20    47.9  48.6    3.6</code></pre>
+</div>
+<div id="joining-the-data-sets" class="section level2">
+<h2>Joining the Data Sets</h2>
+<pre class="r"><code>library(dplyr)
+project &lt;- left_join(murders, results_us_election_2016, by = &quot;state&quot;) %&gt;% 
+    select(-others) %&gt;% rename(ev = electoral_votes)
+head(project)</code></pre>
+<pre><code>##        state abb region population total ev clinton trump
+## 1    Alabama  AL  South    4779736   135  9    34.4  62.1
+## 2     Alaska  AK   West     710231    19  3    36.6  51.3
+## 3    Arizona  AZ   West    6392017   232 11    45.1  48.7
+## 4   Arkansas  AR  South    2915918    93  6    33.7  60.6
+## 5 California  CA   West   37253956  1257 55    61.7  31.6
+## 6   Colorado  CO   West    5029196    65  9    48.2  43.3</code></pre>
+<p><em>I chose to drop the &quot;others&quot; column, due to the fact that in reality only two parties mattered in this 2016 election, and a vote for a &quot;other&quot; party, was a vote for Trump. I also chose to rename the electoral votes to a shorter abbreviation becasue the full words made the data &quot;seem&quot; untidy. I chose a left join because I wanted to use a join that was based on mutating the data frame. I could have used an inner join, since there are no NA's, but I chose the left join.</em></p>
+</div>
+<div id="summarizing-and-dplyr" class="section level2">
+<h2>Summarizing and DPLYR</h2>
+<pre class="r"><code>library(dplyr)
+library(dslabs)
+library(tidyr)
+gbregion &lt;- project %&gt;% group_by(region) %&gt;% summarize_if(is.numeric, 
+    c(mean = mean, sd = sd))
+head(gbregion)</code></pre>
+<pre><code>## # A tibble: 4 x 11
+##   region population_mean total_mean ev_mean clinton_mean trump_mean
+##   &lt;fct&gt;            &lt;dbl&gt;      &lt;dbl&gt;   &lt;dbl&gt;        &lt;dbl&gt;      &lt;dbl&gt;
+## 1 North…        6146360        163.   10.7          53.7       40.1
+## 2 South         6804378.       247.   11.5          44.0       51.6
+## 3 North…        5577250.       152.    9.83         40.5       53  
+## 4 West          5534273.       147     9.85         43.6       45.9
+## # … with 5 more variables: population_sd &lt;dbl&gt;, total_sd &lt;dbl&gt;, ev_sd &lt;dbl&gt;,
+## #   clinton_sd &lt;dbl&gt;, trump_sd &lt;dbl&gt;</code></pre>
+<pre class="r"><code>project %&gt;% group_by(region) %&gt;% summarize_if(is.numeric, c(mean = mean, 
+    sd = sd)) %&gt;% pivot_longer(-region) %&gt;% separate(name, into = c(&quot;var&quot;, 
+    &quot;stat&quot;))</code></pre>
+<pre><code>## # A tibble: 40 x 4
+##    region    var        stat       value
+##    &lt;fct&gt;     &lt;chr&gt;      &lt;chr&gt;      &lt;dbl&gt;
+##  1 Northeast population mean  6146360   
+##  2 Northeast total      mean      163.  
+##  3 Northeast ev         mean       10.7 
+##  4 Northeast clinton    mean       53.7 
+##  5 Northeast trump      mean       40.1 
+##  6 Northeast population sd    6469174.  
+##  7 Northeast total      sd        200.  
+##  8 Northeast ev         sd          8.94
+##  9 Northeast clinton    sd          4.94
+## 10 Northeast trump      sd          6.16
+## # … with 30 more rows</code></pre>
+<pre class="r"><code>filter(project, region == &quot;south&quot;) %&gt;% summarise(mean = mean(project$total))</code></pre>
+<pre><code>##       mean
+## 1 184.3725</code></pre>
+<pre class="r"><code>topten &lt;- project %&gt;% arrange(desc(population), .by_group = TRUE) %&gt;% 
+    slice(1:10)
+head(topten)</code></pre>
+<pre><code>##          state abb        region population total ev clinton trump
+## 1   California  CA          West   37253956  1257 55    61.7  31.6
+## 2        Texas  TX         South   25145561   805 38    43.2  52.2
+## 3      Florida  FL         South   19687653   669 29    47.8  49.0
+## 4     New York  NY     Northeast   19378102   517 29    59.0  36.5
+## 5     Illinois  IL North Central   12830632   364 20    55.8  38.8
+## 6 Pennsylvania  PA     Northeast   12702379   457 20    47.9  48.6</code></pre>
+<pre class="r"><code>murders &lt;- project %&gt;% mutate(murders, rate = total/population * 
+    1e+05)
+head(murders)</code></pre>
+<pre><code>##        state abb region population total ev clinton trump     rate
+## 1    Alabama  AL  South    4779736   135  9    34.4  62.1 2.824424
+## 2     Alaska  AK   West     710231    19  3    36.6  51.3 2.675186
+## 3    Arizona  AZ   West    6392017   232 11    45.1  48.7 3.629527
+## 4   Arkansas  AR  South    2915918    93  6    33.7  60.6 3.189390
+## 5 California  CA   West   37253956  1257 55    61.7  31.6 3.374138
+## 6   Colorado  CO   West    5029196    65  9    48.2  43.3 1.292453</code></pre>
+<pre class="r"><code>murders %&gt;% select(state, region, rate) %&gt;% filter(rate &lt;= 0.71)</code></pre>
+<pre><code>##           state        region      rate
+## 1        Hawaii          West 0.5145920
+## 2          Iowa North Central 0.6893484
+## 3 New Hampshire     Northeast 0.3798036
+## 4  North Dakota North Central 0.5947151
+## 5       Vermont     Northeast 0.3196211</code></pre>
+<pre class="r"><code>## using summarize
+
+us_murder_rate &lt;- project %&gt;% summarize(rate = sum(total)/sum(population) * 
+    1e+05)
+us_murder_rate</code></pre>
+<pre><code>##       rate
+## 1 3.034555</code></pre>
+<pre class="r"><code>summarize(project, mean(population))</code></pre>
+<pre><code>##   mean(population)
+## 1          6075769</code></pre>
+<pre class="r"><code>project %&gt;% filter(region == &quot;south&quot;) %&gt;% summarize(average = mean(project$trump, 
+    na.rm = T), standard_deviation = sd(project$trump, na.rm = TRUE))</code></pre>
+<pre><code>##    average standard_deviation
+## 1 48.45098           11.95812</code></pre>
+<pre class="r"><code>project %&gt;% group_by(region) %&gt;% summarize(median = median(clinton), 
+    minimum = min(clinton), maximum = max(clinton))</code></pre>
+<pre><code>## # A tibble: 4 x 4
+##   region        median minimum maximum
+##   &lt;fct&gt;          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1 Northeast       54.6    46.8    60  
+## 2 South           40.7    26.5    90.9
+## 3 North Central   39.9    27.2    55.8
+## 4 West            47.9    21.9    62.2</code></pre>
+<pre class="r"><code>project %&gt;% group_by(region) %&gt;% summarize(range = quantile(ev, 
+    c(0, 0.5, 1)))</code></pre>
+<pre><code>## # A tibble: 12 x 2
+## # Groups:   region [4]
+##    region        range
+##    &lt;fct&gt;         &lt;dbl&gt;
+##  1 Northeast         3
+##  2 Northeast         7
+##  3 Northeast        29
+##  4 South             3
+##  5 South             9
+##  6 South            38
+##  7 North Central     3
+##  8 North Central    10
+##  9 North Central    20
+## 10 West              3
+## 11 West              6
+## 12 West             55</code></pre>
+<pre class="r"><code>project %&gt;% group_by(region) %&gt;% summarize(median_rate = median(population))</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   region        median_rate
+##   &lt;fct&gt;               &lt;dbl&gt;
+## 1 Northeast        3574097 
+## 2 South            4625364 
+## 3 North Central    5495456.
+## 4 West             2700551</code></pre>
+<pre class="r"><code>project %&gt;% group_by(region) %&gt;% summarize(n())</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   region        `n()`
+##   &lt;fct&gt;         &lt;int&gt;
+## 1 Northeast         9
+## 2 South            17
+## 3 North Central    12
+## 4 West             13</code></pre>
+<pre class="r"><code>summarise(project, states = n_distinct(abb), count = n())</code></pre>
+<pre><code>##   states count
+## 1     51    51</code></pre>
+<pre class="r"><code>project %&gt;% group_by(region) %&gt;% summarize(median_yearly_murder_rate = median(total))</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   region        median_yearly_murder_rate
+##   &lt;fct&gt;                             &lt;dbl&gt;
+## 1 Northeast                            97
+## 2 South                               207
+## 3 North Central                        80
+## 4 West                                 36</code></pre>
+<pre class="r"><code>project %&gt;% group_by(state) %&gt;% summarize(avg_votes = mean(ev), 
+    n = n()) %&gt;% mutate(state = as.character(state))</code></pre>
+<pre><code>## # A tibble: 51 x 3
+##    state                avg_votes     n
+##    &lt;chr&gt;                    &lt;dbl&gt; &lt;int&gt;
+##  1 Alabama                      9     1
+##  2 Alaska                       3     1
+##  3 Arizona                     11     1
+##  4 Arkansas                     6     1
+##  5 California                  55     1
+##  6 Colorado                     9     1
+##  7 Connecticut                  7     1
+##  8 Delaware                     3     1
+##  9 District of Columbia         3     1
+## 10 Florida                     29     1
+## # … with 41 more rows</code></pre>
+<p><em>I found out that the more violence that an area had, then the more likely they were to vote for Clinton. I can attribute this to systematic issues, and the fact that poor/poverty ridden areas are more likely to have more violence, resulting in them more likely to vote for a candidate who is not filthy rich/ concered only with the well being of the filthy rich. I can also attribute this to the fact that minority areas are more likely to have higher crime, and they are also more likely to be democratic, because that is what helps them the most. </em></p>
+<p><em>Another thing I got out of summarizing and using DPLYR was the fact that areas with looser gun laws are more likely to have a higher amount of gun violence. This makes sense, but is very unfornaute, becasue it would be the hope that areas like this (the south and west) would take more consideration into vetting the people buying the guns.</em></p>
+</div>
+<div id="visualizing-and-pivoting" class="section level2">
+<h2>Visualizing and Pivoting</h2>
+<pre class="r"><code>library(tidyverse)
+library(tidyr)
+library(dplyr)
+library(lubridate)
+
+cormat &lt;- project %&gt;% select_if(is.numeric) %&gt;% cor(use = &quot;pair&quot;)
+cormat %&gt;% round(2)</code></pre>
+<pre><code>##            population total    ev clinton trump
+## population       1.00  0.96  1.00    0.26 -0.18
+## total            0.96  1.00  0.96    0.26 -0.16
+## ev               1.00  0.96  1.00    0.26 -0.18
+## clinton          0.26  0.26  0.26    1.00 -0.95
+## trump           -0.18 -0.16 -0.18   -0.95  1.00</code></pre>
+<pre class="r"><code>cormat %&gt;% as.data.frame %&gt;% rownames_to_column(&quot;var1&quot;) %&gt;% pivot_longer(-1, 
+    &quot;var2&quot;, values_to = &quot;correlation&quot;) %&gt;% ggplot(aes(var1, var2, 
+    fill = correlation)) + geom_tile() + scale_fill_gradient2(low = &quot;white&quot;, 
+    mid = &quot;pink&quot;, high = &quot;green&quot;) + geom_text(aes(label = round(correlation, 
+    2)), color = &quot;black&quot;, size = 4) + theme(axis.text.x = element_text(angle = 90, 
+    hjust = 1)) + coord_fixed()</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>p &lt;- project %&gt;% ggplot(aes(population, total, label = abb, color = region)) + 
+    geom_label()
+p + scale_x_log10() + scale_y_log10() + ggtitle(&quot;Gun murder data&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>r &lt;- murders %&gt;% summarize(rate = sum(total)/sum(population) * 
+    10^6) %&gt;% pull(rate)
+project %&gt;% ggplot(aes(population/10^6, total, label = abb)) + 
+    geom_abline(intercept = log10(r), lty = 2, color = &quot;darkgrey&quot;) + 
+    geom_point(aes(col = region), size = 3) + scale_x_log10() + 
+    scale_y_log10() + xlab(&quot;Populations in millions (log scale)&quot;) + 
+    ylab(&quot;Total number of murders (log scale)&quot;) + ggtitle(&quot;US Gun Murders in 2010&quot;) + 
+    scale_color_discrete(name = &quot;Region&quot;) + scale_x_continuous(breaks = round(seq(min(0), 
+    max(40), by = 5), 1)) + scale_y_continuous(breaks = round(seq(min(0), 
+    max(1100), by = 150), 1))</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><em>These graphs seem to show that the higher the population is, as well as electoral votes, then the higher the amount of murders will be - which makes sense, howeve there are some outliers , like DC - which could be due to the high rate of homelessness. If I have time to do another project like this, I would correlate homelessness with Trump votes to see if there is any correlation there. The south and west, both places where it is normal to have a gun, were consistently high in the murder rate.</em></p>
+<p><em>I also ran a graphing code to see if there was any correlation with the high murder rate and the percentage of votes that went to Trump, and it turns out there was really no correlation, so I chose to just improve on my previous graph for the second graph.</em></p>
+<p><em>I also chose to pivot longer in this step in order to be able to see my correlation matrix with ease, since I have trouble matching up numbers, I prefferd the numbers be seperated and in order doing down the page, instead of in a wide matrix.</em></p>
+</div>
+<div id="clustering" class="section level2">
+<h2>Clustering</h2>
+<pre class="r"><code>library(tidyverse)
+library(cluster)
+# project
+clust_dat &lt;- project %&gt;% select(population, trump, clinton)
+
+set.seed(348)
+kmeans1 &lt;- clust_dat %&gt;% kmeans(3)
+kmeans1</code></pre>
+<pre><code>## K-means clustering with 3 clusters of sizes 4, 16, 31
+## 
+## Cluster means:
+##   population    trump  clinton
+## 1   25366318 42.32500 52.92500
+## 2    8321570 46.76875 48.04375
+## 3    2427543 50.10968 42.05484
+## 
+## Clustering vector:
+##  [1] 3 3 2 3 1 3 3 3 3 1 2 3 3 2 2 3 3 3 3 3 2 2 2 3 3 2 3 3 3 3 2 3 1 2 3 2 3 3
+## [39] 2 3 3 3 2 1 3 3 2 2 3 2 3
+## 
+## Within cluster sum of squares by cluster:
+## [1] 2.094706e+14 9.222656e+13 6.994668e+13
+##  (between_SS / total_SS =  84.2 %)
+## 
+## Available components:
+## 
+## [1] &quot;cluster&quot;      &quot;centers&quot;      &quot;totss&quot;        &quot;withinss&quot;     &quot;tot.withinss&quot;
+## [6] &quot;betweenss&quot;    &quot;size&quot;         &quot;iter&quot;         &quot;ifault&quot;</code></pre>
+<pre class="r"><code>kmeansclust &lt;- clust_dat %&gt;% mutate(cluster = as.factor(kmeans1$cluster))
+
+kmeansclust %&gt;% ggplot(aes(trump, clinton, color = cluster)) + 
+    geom_point()</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /> <em>This clustering shows that the states with the bigger populations, such as California, or New York, were more likley to vote for Clinton, while the smaller states were the least likely to vote for Clinton. I can not think of a reason that this would be, besides the confounding fact that all of the huge states, with the exception of Texas, are fairly liberal states. There was one outlier small state that did vote heavily democratic, DC - probably due to the fact that alot of political families reside there, and they usually know how to vote correctly.</em></p>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

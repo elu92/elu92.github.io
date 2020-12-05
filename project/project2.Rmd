@@ -1,0 +1,264 @@
+---
+title: "project 2 - elu92"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+hook_output = knit_hooks$get('output')
+knit_hooks$set(output = function(x, options) {
+  # this hook is used only when the linewidth option is not NULL
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    # any lines wider than n should be wrapped
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  hook_output(x, options)
+})
+
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,fig.align="center",warning=FALSE,message=FALSE,fig.width=8, fig.height=5, linewidth=60)
+options(tibble.width = 100,width = 100)
+library(tidyverse)
+```
+
+#Intro
+*This study is a look at weight loss three different types of diets. The efficiancy of each diet was measured in response to the total weight loss of each person, which is their starting weight minus their weight at 6 weeks post starting the diet. We see one binary value corresponding to either male or female, 0 and 1 respectively. Their height is measured in centimeters. There are 3 diet types, 1,2,and 3. They also recorded age for each person. In total there are 76 observations and 7 variables.*
+
+##Significance Tests
+```{R}
+library(readr)
+diet <- read_csv("stcp-Rdataset-Diet.csv")
+
+diet$weight.loss<-diet$pre.weight - diet$weight6weeks
+
+man1<-manova(cbind(weight.loss,Age,pre.weight,Height)~Diet, data=diet)
+summary(man1)
+summary.aov(man1)
+diet%>%group_by(Diet)%>%summarize(mean(weight.loss))
+pairwise.t.test(diet$weight.loss,diet$Diet, p.adj="none")
+```
+*In total we performed 8 tests, 1 manova,4 anova, and 3 post hoc t tests . With this in mind we must our probability of at least one Type I error is 1-.95^(8), which is .34 or 34 percent. So we will set out alpha to .05/8, which is .0063. We perfomed a multivariate manova see if there was a relationship between diet type (1,2,3) and 5 dependent numerical variables (weight.loss,Age,gender,pre.weight,Height). The F statistic was not significant, however, I proceeded to do a follow-up univariate anovas, which showed that the relationship between diet and weight loss were significant ,with a statistic of .006.Post hoc analysis was performed conducting pairwise comparisons to determine which diets differed in weight.loss amounts. This showed that 3 and 1 differed, and 3 and 2 differed after adjusting for multiple comparisons (bonferroni). The Manova assumptions are as follows : Random samples with independent observations, dependant variables have at least 25 observations, homogeneity of within-group covariance matrices, linear relationships among DVs, no extreme univariate or multivariate outliers, no multicollinearity. All asumptions are likely to have been met, exept for no multicollinearity, because bodily numbers do not vary drastically. *
+
+##Randomization Test
+```{R}
+#Our null hypotheis that there was no association between amount of weight loss and Diet 3 or 2, and our alternate was that there is an association between amount of weight loss and Diet 3 or 2. I chose to do just these two diets due to their post hoc signifciance, and due to the fact that diet 1 is under our amount of 25 observations.
+diet%>%group_by(Diet)%>%summarize(mean=mean(weight.loss))
+diet%>%group_by(Diet)%>%summarize(s=sd(weight.loss))
+diet%>%group_by(Diet)%>%summarize(n())
+
+df_two <- data.frame(loss = rnorm(25, mean=3.268000	, sd=2.464535),Diet = "2")
+df_three <- data.frame(loss = rnorm(27, mean=5.148148, sd=2.395568	),Diet="3")
+
+df_weight_loss <- rbind(df_two, df_three)
+
+ggplot(df_weight_loss, aes(x = loss, fill = Diet)) + ylab("Count") + xlab("Weight Loss") + geom_histogram(bins = 30, colour = "black") + 
+  geom_vline(data = filter(df_weight_loss, Diet == "2"), aes(xintercept = mean(loss)),size = 1, linetype = "dashed", colour = "green") + geom_vline(data = filter(df_weight_loss, Diet == "3"), aes(xintercept = mean(loss)),size = 1, linetype = "dashed", colour = "blue")+theme_classic()
+
+mean_two <- mean(df_two$loss)
+mean_three <- mean(df_three$loss)
+diff_means_obs <- mean_three - mean_two
+
+t.test(loss ~ Diet, data = df_weight_loss, alternative = "two.sided")
+```
+
+```{R}
+set.seed(49)
+simulated_means <- list()
+nreps = 5000
+for(i in 1:nreps){
+        reshuffled <- df_weight_loss
+reshuffled$loss <- sample(reshuffled$loss, 
+                           size = nrow(reshuffled), replace = FALSE)
+mean_diet_2_sim<- mean(reshuffled %>% filter(Diet == "2") %>% pull(loss))
+mean_diet_3_sim<- mean(reshuffled %>% filter(Diet == "3") %>% pull(loss))
+
+mean_diff_sim <- mean_diet_3_sim - mean_diet_2_sim
+    
+simulated_means[i] <- mean_diff_sim
+}    
+simulated_means <- unlist(simulated_means)
+
+simulated_means[1:10]
+
+ggplot() + ylab("Count") + xlab("Simulated mean weight loss difference") +
+    geom_histogram(aes(x = simulated_means), bins = 30, 
+                   fill = "grey", alpha = 0.4, colour = "black") +
+    geom_vline(xintercept = diff_means_obs, size = 1, 
+               linetype = "dashed", colour = "black") + 
+    theme_classic()
+
+abs_simulated_means <- abs(simulated_means)
+abs_diff_means_obs <- abs(diff_means_obs)
+exceed_count <- length(abs_simulated_means[abs_simulated_means >= 
+                                               abs_diff_means_obs])
+p_val <- exceed_count / nreps
+view(p_val)
+```
+*The P-value from the randomization test is 0.07326255555.As we can see, the randomization test provides results that are largely inconsistent with the t-test. This is not surprising since we specifically sampled independent data from non-normal distributions with semi-similar variances. In other words, our sampled data violate at least one of the assumptions of the t-test and in such a case the difference in means is by definition non-analogous to the t statistic used in the t-test. This is an example where randomization tests provide more accurate (or exact) P-values than parametric tests (e.g. small samples from skewed distributions) but even more diverse applications of randomization tests are found in ecology and evolutionary biology, unlike this model.*
+
+##Linear Regression
+```{R}
+center_scale <- function(x) {scale(x, scale = FALSE)}
+diet$age_scaled<-center_scale(diet$Age)
+diet$weightloss_scaled<-center_scale(diet$weight.loss)
+diet$height_scaled<-center_scale(diet$Height)
+
+fit<-lm(weightloss_scaled ~ age_scaled * height_scaled, data=diet)
+summary(fit)
+
+#The intercept estimate means that when someone has a height and age of 0, they will lose 0.036440 pounds, which is expected since you cant lose much if you dont exist (not sig). The coef estimate for age means that as weight loss increases by one pound, the age decreases by 0.024870 (not sig). The same goes for height, except height decreases by 0.008848 as weight loss increases(not).Slope of age on weight loss for age factor of .003913 less than height(not significant).
+
+library(interactions)
+#interact_plot(fit,weightloss_scaled,height_scaled)
+
+
+ggplot(diet, aes(weightloss_scaled,age_scaled, color = gender)) +geom_smooth(method = "lm", se = F, fullrange = T)+ geom_point()+geom_vline(xintercept=0,lty=2)+geom_vline(xintercept=mean(diet$weightloss_scaled))
+
+
+plot(fit,1)
+plot(fit, 3)
+plot(fit, 2)
+
+library(lmtest)
+library(car)
+library(sandwich)
+coeftest(fit, vcov = vcovHC(fit))[,1:2]
+#When we fixed robust to violations of homoskedasticity, there were no significant changes in our estimates or our standar error. Since I corrected for normaility earlier, and have just corrected for homoskedasticity, our model must have an issue of linearity, and should use non-linear transformations of the predictors.
+```
+*Our adjusted R-squared is -0.01024, which means our overall model explains 0% of variation in the response variable explained by the overall model.*
+
+##Bootstrapping
+```{R}
+fit<-lm(weightloss_scaled ~ age_scaled*height_scaled, data=diet)
+resids<-fit$residuals
+fitted<-fit$fitted.values
+
+resid_resamp<-replicate(5000,{
+new_resids<-sample(resids,replace=TRUE) 
+diet$new_y<-fitted+new_resids 
+fit<-lm(new_y~age_scaled *height_scaled,data=diet) 
+coef(fit) 
+})
+
+resid_resamp%>%t%>%as.data.frame%>%summarize_all(sd)
+
+#Our intercept standard error has the following numbers - orginal:.288, robust:0.296191891, bootstrapped:0.288387. In all cases none of them are significant, and there is only a .01 flucuation. Our age standard error has the following numbers - orginal:0.030017, robust: 0.029290982, bootstrapped:0.02896615	.In all cases none of them are significant, and there is only a .01 flucuation. Our height standard error has the following numbers - orginal:0.027614, robust:0.027816173, bootstrapped:0.02740836.In all cases none of them are significant, and there is only a .01 flucuation. 
+```
+
+##Logistic Modeling
+```{R}
+library(tidyverse)
+library(lmtest)
+fit3<-glm(gender~Height + pre.weight,data=diet,family=binomial)
+summary(fit3)
+exp(coef(fit3))
+
+#Controlling for pre.weight, the larger a persons weight was to start of with, the moree likely they were a male. Controlling for starting weight, the taller a person was, the more likely they were a male. Both are significant.Controlling for starting weight, for every one additional inch , odds of being a male increase by a factor of 1.083314 (significant). Controlling for height, for every one additional pound , odds of being a male increase by a factor of 1.522415 (significant).Odds of being a male when weight and height are zero is 3.864094e-20.
+
+class_diag<-function(probs,truth){
+  
+  if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+  prediction<-ifelse(probs>.5,1,0)
+  acc=mean(truth==prediction)
+  sens=mean(prediction[truth==1]==1)
+  spec=mean(prediction[truth==0]==0)
+  ppv=mean(truth[prediction==1]==1)
+  f1=2*(sens*ppv)/(sens+ppv)
+  
+  #CALCULATE EXACT AUC
+  ord<-order(probs, decreasing=TRUE)
+  probs <- probs[ord]; truth <- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,auc)
+}
+
+
+gen<-as.numeric(fit3$y)%>%na.omit()
+PROBS<-predict(fit3,type = "response")%>%na.omit
+table(predict=as.numeric(PROBS>.5),truth=gen)%>%addmargins
+
+#Accuracy: (40+30)/76 = .921,  92.1% of cases are classified correctly 
+#Sensitivity: 30/33 = .090, 9% of men are correctly classified
+#Specificity: 40/43 = .930, 93% of women are correctly classified
+#Precsion: 40/43 = .930, woman who are classified as woman who actually are
+#AUC : 0.9556025, easy to predict gender from height and pre weight 
+
+library(plotROC)
+ROCplot<-ggplot(fit3)+geom_roc(aes(d=fit3$y,m=PROBS), n.cuts=0)
+ROCplot
+calc_auc(ROCplot)
+#our very high AUC means that it is easy to predict gender from height and pre weight
+
+
+
+#diet%>%ggplot(aes(diet$logit,color=gender,fill=gender))+geom_density(alpha=.4)+theme(legend.position=c(.85,.85))+geom_vline(xintercept=0)+xlab("predictor (logit)")
+```
+
+#Logistical Modeling Part 2
+```{R}
+fit4<-glm(gender ~., data = diet, family = "binomial")
+summary(fit4)
+exp(coef(fit4))
+gen2<-as.numeric(fit4$y)%>%na.omit()
+PROBS2<-predict(fit4,type = "response")%>%na.omit
+class_diag(PROBS2,gen2)
+library(glmnet)
+library(dplyr)
+diet2<-diet
+
+#folding part 1
+set.seed(1234)
+k=10
+data <- diet2 %>% sample_frac #put rows of dataset in random order
+folds <- ntile(1:nrow(data),n=10) #create fold labels
+diags<-NULL
+for(i in 1:k){
+train <- data[folds!=i,] #create training set (all but fold i)
+test <- data[folds==i,] #create test set (just fold i)
+truth <- diet2$gender #save truth labels from fold i
+fit5 <- glm(gender~(.)^2, data=train, family="binomial")
+probs <- predict(fit5, newdata=test, type="response")
+diags<-rbind(diags,class_diag(probs,truth))
+}
+class_diag(probs,truth)
+
+#lasso
+diet2<-diet
+gen3<-as.numeric(fit4$y)%>%na.omit()
+yes <- as.matrix(gen3) 
+xes<-model.matrix(gender~. ,data=diet2)[,-1]
+xes<-scale(xes)
+cv <- cv.glmnet(xes, yes, family = "binomial") 
+lasso <- glmnet(xes, yes, family = "binomial", lambda = cv$lamda.1se)
+#coef(lasso) #Values that show up are the most predictive variables
+
+#Folding part 2
+fit6<-glm(gender ~ Height + pre.weight, data = diet2, family = "binomial")
+set.seed(1234)
+k=10
+data <- diet2 %>% sample_frac #put rows of dataset in random order
+folds <- ntile(1:nrow(data),n=10) #create fold labels
+diags<-NULL
+for(i in 1:k){
+train2 <- data[folds!=i,] #create training set (all but fold i)
+test2 <- data[folds==i,] #create test set (just fold i)
+truth2 <- diet2$gender #save truth labels from fold i
+fit7 <- glm(gender~Height + pre.weight, data=train, family="binomial")
+probs2 <- predict(fit7, newdata=test2, type="response")
+diags2<-rbind(diags,class_diag(probs2,truth2))
+}
+class_diag(probs2,truth2)
+```
+
+
+

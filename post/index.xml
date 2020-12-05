@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Emma Uwakwe</title>
+    <link>/post/</link>
+    <description>Recent content in Posts on Emma Uwakwe</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sat, 05 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Getting R and Python To &#34;Talk&#34; </title>
+      <link>/post/2020/12/05/getting-r-and-python-to-talk/</link>
+      <pubDate>Sat, 05 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/05/getting-r-and-python-to-talk/</guid>
+      <description>Most of the people in data science community are committed to only one programming language but wished to have some of the capabilities of other. For instance, Python is more widely used in data processing with objected-oriented capabilities along with incredible community support but unlike R, it doesn’t have specialised packages for statistical computing. Similarly, R consists of packages for almost any statistical application one can think of and equipped with excellent visualisation libraries like ggplot2 but can be a memory glutton and slow when dealing with large datasets.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Emma Uwakwe</title>
+    <link>/</link>
+    <description>Recent content on Emma Uwakwe</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sat, 05 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Getting R and Python To &#34;Talk&#34; </title>
+      <link>/post/2020/12/05/getting-r-and-python-to-talk/</link>
+      <pubDate>Sat, 05 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/05/getting-r-and-python-to-talk/</guid>
+      <description>Most of the people in data science community are committed to only one programming language but wished to have some of the capabilities of other. For instance, Python is more widely used in data processing with objected-oriented capabilities along with incredible community support but unlike R, it doesn’t have specialised packages for statistical computing. Similarly, R consists of packages for almost any statistical application one can think of and equipped with excellent visualisation libraries like ggplot2 but can be a memory glutton and slow when dealing with large datasets.</description>
+    </item>
+    
+    <item>
+      <title>project 2 - elu92</title>
+      <link>/project/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>Intro This study is a look at weight loss three different types of diets. The efficiancy of each diet was measured in response to the total weight loss of each person, which is their starting weight minus their weight at 6 weeks post starting the diet. We see one binary value corresponding to either male or female, 0 and 1 respectively. Their height is measured in centimeters. There are 3 diet types, 1,2,and 3.</description>
+    </item>
+    
+    <item>
+      <title>Project1</title>
+      <link>/project/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>Intro I chose two data sets that reflect conditions in the year 2016,across all states. I basiccly wanted to look at how violence effected the voting patterns of each state, so I chose to use a data set that recorderd total murders in 2016 for each state,and a data set that showcased the percentage of electoral votes that went to biden versus trump for each state. These data sets also have abbreviations and population size for each state.</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/</guid>
+      <description>  Check out some of my coding projects below:
+ Wrangling &amp;amp; Exploratory Data Analysis
+ Modeling, Inference, Prediction
+  -- </description>
+    </item>
+    
+    <item>
+      <title>Resume</title>
+      <link>/resume/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/resume/</guid>
+      <description>     </description>
+    </item>
+    
+  </channel>
+</rss>
