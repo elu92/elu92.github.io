@@ -60,7 +60,7 @@
  
 <div class="blog-title">
           <h4>
-         January 1, 0001 
+         January 1, 2022 
             &nbsp;&nbsp;
             
           </h4>
@@ -76,7 +76,7 @@
 
 <div id="intro" class="section level2">
 <h2>Intro</h2>
-<p>I chose two data sets that reflect conditions in the year 2016,across all states. I basically wanted to look at how violence effected the voting patterns of each state, so I chose to use a data set that had a recorderd total murders in 2016 for each state,and a data set that showcased the percentage of electoral votes that went to Biden versus Trump for each state. These data sets also have abbreviations and population size for each state.</p>
+<p>I chose two data sets that reflect conditions in the year 2016, across all states. I basically wanted to look at how violence effected the voting patterns of each state, so I chose to use a data set that had a recorderd total murders in 2016 for each state, and a seperate data set that showcased the percentage of electoral votes that went to Biden versus Trump for each state. These data sets also have abbreviations and population size for each state.</p>
 <pre class="r"><code>library(dslabs)
 # data_frame(&#39;murders&#39;)
 # data_frame(&#39;results_us_election_2016&#39;)
@@ -110,7 +110,6 @@ head(project)</code></pre>
 ## 4   Arkansas  AR  South    2915918    93  6    33.7  60.6
 ## 5 California  CA   West   37253956  1257 55    61.7  31.6
 ## 6   Colorado  CO   West    5029196    65  9    48.2  43.3</code></pre>
-<p><em>I chose to drop the &quot;others&quot; column, due to the fact that in reality only two parties mattered in this 2016 election, and a vote for a &quot;other&quot; party, was a vote for Trump. I also chose to rename the electoral votes to a shorter abbreviation becasue the full words made the data &quot;seem&quot; untidy. I chose a left join because I wanted to use a join that was based on mutating the data frame. I could have used an inner join, since there are no NA's, but I chose the left join.</em></p>
 </div>
 <div id="summarizing-and-dplyr" class="section level2">
 <h2>Summarizing and DPLYR</h2>
@@ -260,8 +259,6 @@ us_murder_rate</code></pre>
 ##  9 District of Columbia         3     1
 ## 10 Florida                     29     1
 ## # … with 41 more rows</code></pre>
-<p><em>I found out that the more violence that an area had, then the more likely they were to vote for Clinton. I can attribute this to systematic issues, and the fact that poor/poverty ridden areas are more likely to have more violence, resulting in them more likely to vote for a candidate who is not filthy rich/ concered only with the well being of the filthy rich. I can also attribute this to the fact that minority areas are more likely to have higher crime, and they are also more likely to be democratic, because that is what helps them the most. </em></p>
-<p><em>Another thing I got out of summarizing and using DPLYR was the fact that areas with looser gun laws are more likely to have a higher amount of gun violence. This makes sense, but is very unfornaute, becasue it would be the hope that areas like this (the south and west) would take more consideration into vetting the people buying the guns.</em></p>
 </div>
 <div id="visualizing-and-pivoting" class="section level2">
 <h2>Visualizing and Pivoting</h2>
@@ -300,9 +297,6 @@ project %&gt;% ggplot(aes(population/10^6, total, label = abb)) +
     max(40), by = 5), 1)) + scale_y_continuous(breaks = round(seq(min(0), 
     max(1100), by = 150), 1))</code></pre>
 <p><img src="../../project/project1_files/figure-html/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p><em>These graphs seem to show that the higher the population is, as well as electoral votes, then the higher the amount of murders will be - which makes sense, howeve there are some outliers , like DC - which could be due to the high rate of homelessness. If I have time to do another project like this, I would correlate homelessness with Trump votes to see if there is any correlation there. The south and west, both places where it is normal to have a gun, were consistently high in the murder rate.</em></p>
-<p><em>I also ran a graphing code to see if there was any correlation with the high murder rate and the percentage of votes that went to Trump, and it turns out there was really no correlation, so I chose to just improve on my previous graph for the second graph.</em></p>
-<p><em>I also chose to pivot longer in this step in order to be able to see my correlation matrix with ease, since I have trouble matching up numbers, I prefferd the numbers be seperated and in order doing down the page, instead of in a wide matrix.</em></p>
 </div>
 <div id="clustering" class="section level2">
 <h2>Clustering</h2>
