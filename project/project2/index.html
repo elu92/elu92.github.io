@@ -137,7 +137,6 @@ summary(man1)</code></pre>
 </div>
 <div id="randomization-test" class="section level2">
 <h2>Randomization Test</h2>
-<pre class="r"><code>#Our null hypotheis that there was no association between amount of weight loss and Diet 3 or 2, and our alternate was that there is an association between amount of weight loss and Diet 3 or 2. I chose to do just these two diets due to their post hoc signifciance, and due to the fact that diet 1 is under our amount of 25 observations.
 diet%&gt;%group_by(Diet)%&gt;%summarize(mean=mean(weight.loss))</code></pre>
 <pre><code>## # A tibble: 3 x 2
 ##    Diet  mean
