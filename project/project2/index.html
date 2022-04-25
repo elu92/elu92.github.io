@@ -76,7 +76,7 @@
 
 <div id="intro" class="section level1">
 <h1>Intro</h1>
-<p><em>This study is a look at weight loss three different types of diets. The efficiancy of each diet was measured in response to the total weight loss of each person, which is their starting weight minus their weight at 6 weeks post starting the diet. We see one binary value corresponding to either male or female, 0 and 1 respectively. Their height is measured in centimeters. There are 3 diet types, 1,2,and 3. They also recorded age for each person. In total there are 76 observations and 7 variables.</em></p>
+<p><em>In this individual project I chose to look at the efficiency of three different weight loss methods. There are binary values corresponding to either male or female, 0 and 1, respectively. </em></p>
 <div id="significance-tests" class="section level2">
 <h2>Significance Tests</h2>
 <pre class="r"><code>library(readr)
@@ -133,7 +133,7 @@ summary(man1)</code></pre>
 ## 3 0.0075 0.0017
 ## 
 ## P value adjustment method: none</code></pre>
-<p><em>In total we performed 8 tests, 1 manova,4 anova, and 3 post hoc t tests . With this in mind we must our probability of at least one Type I error is 1-.95^(8), which is .34 or 34 percent. So we will set out alpha to .05/8, which is .0063. We perfomed a multivariate manova see if there was a relationship between diet type (1,2,3) and 5 dependent numerical variables (weight.loss,Age,gender,pre.weight,Height). The F statistic was not significant, however, I proceeded to do a follow-up univariate anovas, which showed that the relationship between diet and weight loss were significant ,with a statistic of .006.Post hoc analysis was performed conducting pairwise comparisons to determine which diets differed in weight.loss amounts. This showed that 3 and 1 differed, and 3 and 2 differed after adjusting for multiple comparisons (bonferroni). The Manova assumptions are as follows : Random samples with independent observations, dependant variables have at least 25 observations, homogeneity of within-group covariance matrices, linear relationships among DVs, no extreme univariate or multivariate outliers, no multicollinearity. All asumptions are likely to have been met, exept for no multicollinearity, because bodily numbers do not vary drastically. </em></p>
+<p><em>I performed 8 tests, one multivariate MANOVA, 4 ANOVA, and 3 post hoc T-tests, with an alpha of .0063. My F statistic was not significant. I proceeded to do a follow-up univariate ANOVA, which showed that the relationship between diet and weight loss was significant, with a statistic of .006. I then performed Post hoc analysis by conducting pairwise comparisons to determine which diets differed in weight loss. </em></p>
 </div>
 <div id="randomization-test" class="section level2">
 <h2>Randomization Test</h2>
@@ -217,7 +217,6 @@ exceed_count &lt;- length(abs_simulated_means[abs_simulated_means &gt;=
                                                abs_diff_means_obs])
 p_val &lt;- exceed_count / nreps
 view(p_val)</code></pre>
-<p><em>The P-value from the randomization test is 0.07326255555.As we can see, the randomization test provides results that are largely inconsistent with the t-test. This is not surprising since we specifically sampled independent data from non-normal distributions with semi-similar variances. In other words, our sampled data violate at least one of the assumptions of the t-test and in such a case the difference in means is by definition non-analogous to the t statistic used in the t-test. This is an example where randomization tests provide more accurate (or exact) P-values than parametric tests (e.g. small samples from skewed distributions) but even more diverse applications of randomization tests are found in ecology and evolutionary biology, unlike this model.</em></p>
 </div>
 <div id="linear-regression" class="section level2">
 <h2>Linear Regression</h2>
@@ -249,7 +248,6 @@ height_scaled,
 ## Multiple R-squared: 0.03541, Adjusted R-squared:
 -0.003693
 ## F-statistic: 0.9056 on 3 and 74 DF, p-value: 0.4426</code></pre>
-<pre class="r"><code>#The intercept estimate means that when someone has a height and age of 0, they will lose 0.036440 pounds, which is expected since you cant lose much if you dont exist (not sig). The coef estimate for age means that as weight loss increases by one pound, the age decreases by 0.024870 (not sig). The same goes for height, except height decreases by 0.008848 as weight loss increases(not).Slope of age on weight loss for age factor of .003913 less than height(not significant).
 
 library(interactions)
 #interact_plot(fit,weightloss_scaled,height_scaled)
@@ -272,8 +270,6 @@ coeftest(fit, vcov = vcovHC(fit))[,1:2]</code></pre>
 ## age_scaled               -0.02097818 0.029870458
 ## height_scaled            -0.01160375 0.028090352
 ## age_scaled:height_scaled -0.00355979 0.003000632</code></pre>
-<pre class="r"><code>#When we fixed robust to violations of homoskedasticity, there were no significant changes in our estimates or our standar error. Since I corrected for normaility earlier, and have just corrected for homoskedasticity, our model must have an issue of linearity, and should use non-linear transformations of the predictors.</code></pre>
-<p><em>Our adjusted R-squared is -0.01024, which means our overall model explains 0% of variation in the response variable explained by the overall model.</em></p>
 </div>
 <div id="bootstrapping" class="section level2">
 <h2>Bootstrapping</h2>
@@ -292,7 +288,6 @@ resid_resamp%&gt;%t%&gt;%as.data.frame%&gt;%summarize_all(sd)</code></pre>
 <pre><code>## (Intercept) age_scaled height_scaled
 age_scaled:height_scaled
 ## 1 0.2836641 0.02969396 0.02787081 0.002804571</code></pre>
-<pre class="r"><code>#Our intercept standard error has the following numbers - orginal:.288, robust:0.296191891, bootstrapped:0.288387. In all cases none of them are significant, and there is only a .01 flucuation. Our age standard error has the following numbers - orginal:0.030017, robust: 0.029290982, bootstrapped:0.02896615 .In all cases none of them are significant, and there is only a .01 flucuation. Our height standard error has the following numbers - orginal:0.027614, robust:0.027816173, bootstrapped:0.02740836.In all cases none of them are significant, and there is only a .01 flucuation. </code></pre>
 </div>
 <div id="logistic-modeling" class="section level2">
 <h2>Logistic Modeling</h2>
@@ -330,7 +325,6 @@ binomial,
 <pre class="r"><code>exp(coef(fit3))</code></pre>
 <pre><code>##  (Intercept)       Height   pre.weight 
 ## 3.864094e-20 1.083314e+00 1.522415e+00</code></pre>
-<pre class="r"><code>#Controlling for pre.weight, the larger a persons weight was to start of with, the moree likely they were a male. Controlling for starting weight, the taller a person was, the more likely they were a male. Both are significant.Controlling for starting weight, for every one additional inch , odds of being a male increase by a factor of 1.083314 (significant). Controlling for height, for every one additional pound , odds of being a male increase by a factor of 1.522415 (significant).Odds of being a male when weight and height are zero is 3.864094e-20.
 
 class_diag&lt;-function(probs,truth){
   
@@ -380,7 +374,6 @@ ROCplot</code></pre>
 <pre class="r"><code>calc_auc(ROCplot)</code></pre>
 <pre><code>##   PANEL group       AUC
 ## 1     1    -1 0.9556025</code></pre>
-<pre class="r"><code>#our very high AUC means that it is easy to predict gender from height and pre weight
 
 
 
